@@ -18,44 +18,80 @@ from datetime import datetime
 # чтение json
 with open('mt_zapros.json') as f:
     data = json.load(f)
-# print(type(data))
+# print(data)
 
 #Получаем по ключу итемс данные из json
 data = data['items']
-print(data)
-
-#Создаем пустой dict (словать данных) и счетчик
-dict_data = {}
-count = 0
-
-#Парсим исходный list формата Json в dictionary (словарь данных)
-for i in data:
-    # print(i)
-    for row in i['rows']:
-        # print(row)
-        dict_data[count] = {
-            'id': i["id"],
-            'date': row["date"],
-            'shows': row["base"]["shows"],
-            'clicks': row["base"]["clicks"],
-            'goals': row["base"]["goals"],
-            'spent': float(row["base"]["spent"]),
-            'cpm': float(row["base"]["cpm"]),
-            'cpc': float(row["base"]["cpc"]),
-            'cpa': float(row["base"]["cpa"]),
-            'ctr': row["base"]["ctr"],
-            'cr': row["base"]["cr"],
-          }
-        count += 1
-
-# print(dict_data)
-
-#Создаем DataFrame из dict (словаря данных или массива данных)
-dict_keys = dict_data[0].keys()
-df = pd.DataFrame.from_dict(dict_data, orient='index',columns=dict_keys)
+# print(data)
 
 
-# Выгрузка данных из DataFrame в Excel
-df.to_excel("traf_mt.xlsx", sheet_name='data', index=False)
+def json_to_pd_dict_dict(data):
+    #Создаем пустой dict (словать данных) и счетчик
+    dict_data = {}
+    count = 0
 
-print('файл сформирован')
+    #Парсим исходный list формата Json в dictionary (словарь данных)
+    for i in data:
+        # print(i)
+        for row in i['rows']:
+            # print(row)
+            dict_data[count] = {
+                'id': i["id"],
+                'date': row["date"],
+                'shows': row["base"]["shows"],
+                'clicks': row["base"]["clicks"],
+                'goals': row["base"]["goals"],
+                'spent': float(row["base"]["spent"]),
+                'cpm': float(row["base"]["cpm"]),
+                'cpc': float(row["base"]["cpc"]),
+                'cpa': float(row["base"]["cpa"]),
+                'ctr': row["base"]["ctr"],
+                'cr': row["base"]["cr"],
+              }
+            count += 1
+
+
+    #Создаем DataFrame из dict (словаря данных или массива данных)
+    dict_keys = dict_data[0].keys()
+    df = pd.DataFrame.from_dict(dict_data, orient='index', columns=dict_keys)
+    print(df)
+    return df
+
+
+def json_to_pd_list_dict(data):
+    #Создаем пустой dict (словать данных) и счетчик
+    dict_data = []
+
+    #Парсим исходный list формата Json в dictionary (словарь данных)
+    for i in data:
+        # print(i)
+        for row in i['rows']:
+            # print(row)
+            a = {
+                'id': i["id"],
+                'date': row["date"],
+                'shows': row["base"]["shows"],
+                'clicks': row["base"]["clicks"],
+                'goals': row["base"]["goals"],
+                'spent': float(row["base"]["spent"]),
+                'cpm': float(row["base"]["cpm"]),
+                'cpc': float(row["base"]["cpc"]),
+                'cpa': float(row["base"]["cpa"]),
+                'ctr': row["base"]["ctr"],
+                'cr': row["base"]["cr"]
+              }
+            dict_data.append(a)
+
+    # print(dict_data)
+
+    #Создаем DataFrame из dict (словаря данных или массива данных)
+    df = pd.DataFrame(dict_data)
+    print(df)
+    return df
+
+data = json_to_pd_dict_dict(data)
+
+# # Выгрузка данных из DataFrame в Excel
+# df.to_excel("traf_mt.xlsx", sheet_name='data', index=False)
+#
+# print('файл сформирован')
